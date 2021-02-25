@@ -1,0 +1,20 @@
+[
+    {
+        "processName": "Tab 1",
+        "processPath": "This is content for Tab 1",
+        "processArguments": "",
+        "autostart": false
+    },
+    {
+        "processName": "Tab 2",
+        "processPath": "This is content for Tab 2",
+        "processArguments": "",
+        "autostart": false
+    },
+    {
+        "processName": "Tab 3",
+        "processPath": "This is content for Tab 3",
+        "processArguments": "",
+        "autostart": false
+    }
+]

@@ -3,13 +3,15 @@ if (require('electron-squirrel-startup')) return;
 // update application using update-electron-app
 require('update-electron-app')()
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 const { CreateMenu } = require('./mainmenu')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let appIcon;
+let appImage;
 
 function createWindow() {
     // Create the browser window.
@@ -27,11 +29,44 @@ function createWindow() {
             }
         });
 
+    appImage = nativeImage.createFromPath(path.join(__dirname, '../../assets/icons/png/16x16.png'));
+    appIcon = new Tray(appImage);
+
+    var contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show App', click: function () {
+                mainWindow.show();
+            }
+        },
+        {
+            label: 'Quit', click: function () {
+                app.isQuiting = true;
+                app.quit();
+            }
+        }
+    ])
+
+    appIcon.setContextMenu(contextMenu);
+
+    mainWindow.on('minimize', function (event) {
+        event.preventDefault();
+        mainWindow.hide();
+    });
+
+    mainWindow.on('close', function (event) {
+        if (!app.isQuiting) {
+            event.preventDefault();
+            mainWindow.hide();
+        }
+
+        return false;
+    });
+
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, '../html/index.html'));
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -43,7 +78,7 @@ function createWindow() {
 
     // Shows the window once it is loaded and ready to be displayed
     mainWindow.once('ready-to-show', () => {
-        mainWindow.show()
+        mainWindow.show();
     });
 
     // Sets the application menu, i.e., 'File', 'Edit' etc. 

@@ -52,3 +52,7 @@ input {
 ::-webkit-scrollbar-thumb:hover {
     background: #5a6268;
 }
+
+.process-details {
+    display: none;
+}
