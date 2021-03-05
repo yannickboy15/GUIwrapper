@@ -32,6 +32,7 @@ selectProgramBtn.addEventListener('click', (event) => {
 ipcRenderer.on('SelectedFile', (event, path) => {
     filePathArea.innerHTML = `${path.toString()}`;
     exePath = path.toString();
+    console.log(exePath);
     startProgramBtn.disabled = exePath === '';
 });
 

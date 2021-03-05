@@ -6,6 +6,8 @@ require('update-electron-app')()
 const { app, BrowserWindow, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 const { CreateMenu } = require('./mainmenu')
+const fs = require('fs');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -79,12 +81,32 @@ function createWindow() {
     // Shows the window once it is loaded and ready to be displayed
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
+        LoadAllProcesses();
+
     });
 
     // Sets the application menu, i.e., 'File', 'Edit' etc. 
     // Passing null will suppress the default menu. On Windows and Linux, 
     // this has the additional effect of removing the menu bar from the window.
     CreateMenu();
+}
+
+function LoadAllProcesses() {
+    fs.readFile('./data/processes.json', 'utf8', (err, jsonString) => {
+        if (err) {
+            console.log("Error reading file from disk:", err);
+            return;
+        }
+        try {
+            const processes = JSON.parse(jsonString);
+            Object.keys(processes).forEach(function(k){
+                var process = processes[k];
+                mainWindow.webContents.send('create_json_tabs', process.processName, process.processPath, process.processArguments, process.autostart);
+            });
+        } catch (err) {
+            console.log('Error parsing JSON string:', err)
+        }
+    });
 }
 
 // This method will be called when Electron has finished
